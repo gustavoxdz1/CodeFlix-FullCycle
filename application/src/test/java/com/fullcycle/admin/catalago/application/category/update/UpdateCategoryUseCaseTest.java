@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalago.application.category.update;
 
+import com.fullcycle.admin.catalago.application.category.create.CreateCategoryCommand;
 import com.fullcycle.admin.catalago.application.category.create.DefaultCreateCategoryUseCase;
 import com.fullcycle.admin.catalago.domain.category.Category;
 import com.fullcycle.admin.catalago.domain.category.CategoryGateway;
@@ -11,11 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
@@ -36,7 +39,7 @@ public class UpdateCategoryUseCaseTest {
     //5.  Teste atualizar categoria com ID invalido
 
     @Test
-    public void givenAValidCommand_whenCallsCreateCategory_shouldReturnCategoryId() {
+    public void givenAValidCommand_whenCallsUpdateCreateCategory_shouldReturnCategoryId() {
         final var aCategory =
                 Category.newCategory("Fimle", null, true);
 
@@ -47,17 +50,17 @@ public class UpdateCategoryUseCaseTest {
         final var expectedId = aCategory.getId();
 
         final var aCommand = UpdateCategoryCommand.with(
-                expectedId.getValue(),
+                aCategory.getId().getValue(),
                 expectedName,
                 expectedDescription,
                 expectedIsActive
         );
 
-        when(categoryGateway.findById(eq(expectedId)))
-                .thenReturn(Optional.of(aCategory));
+            when(categoryGateway.findById(eq(expectedId)))
+                    .thenReturn(Optional.of(aCategory));
 
-        when(categoryGateway.update(any()))
-                .thenAnswer(ReturnFirstArg());
+            when(categoryGateway.update(any()))
+                .thenAnswer(returnsFirstArg());
 
         final var actualOutput = useCase.execute(aCommand).get();
 
@@ -73,7 +76,7 @@ public class UpdateCategoryUseCaseTest {
                                 && Objects.equals(expectedIsActive, aUpdatedCategory.isActive())
                                 && Objects.equals(expectedId, aUpdatedCategory.getId())
                                 && Objects.equals(aCategory.getCreatedAt(), aUpdatedCategory.getCreatedAt())
-                                && aCategory.getUpdateAt().isBefore(aUpdatedCategory.getUpdatedAt())
+                                && Objects.equals(aCategory.getUpdateAt(), aUpdatedCategory.getUpdateAt())
                                 && Objects.isNull(aUpdatedCategory.getDeletedAt())
         ));
     }

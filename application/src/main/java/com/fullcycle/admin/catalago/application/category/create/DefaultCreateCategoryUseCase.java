@@ -9,7 +9,7 @@ import io.vavr.control.Either;
 
 import java.util.Objects;
 
-public class DefaultCreateCategoryUseCase extends UseCase<CreateCategoryCommand, CreateCategoryOutput> {
+public class DefaultCreateCategoryUseCase extends UseCase<CreateCategoryCommand,Either<Notification, CreateCategoryOutput>> {
 
     private final CategoryGateway categoryGateway;
     public DefaultCreateCategoryUseCase(final CategoryGateway categoryGateway) {

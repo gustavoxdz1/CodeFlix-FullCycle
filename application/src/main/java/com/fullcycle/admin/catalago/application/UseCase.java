@@ -8,5 +8,5 @@ import io.vavr.control.Either;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public abstract class UseCase <IN, OUT> {
 
-    public abstract Either<Notification, CreateCategoryOutput> execute(IN anIn );
+    public abstract OUT execute(IN anIn);
 }
